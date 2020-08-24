@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Login Page</title>
+  <link rel="stylesheet" type="text/css" href="/time-extension/src/test/index.css">
+</head>
+<body>
+
+<h1>Login</h1>
+<p>Please login</p>
+
+<form action="javascript:void(0);">
+
+  Username <input type="text" id="userid">
+  <br>
+  Password <input type="password" id="USER_PASS">
+
+  <button id="anmeldebutton_de" type="submit"
+          onclick="onLogin()">
+    Anmelden
+  </button>
+
+</form>
+
+<script>
+  function onLogin() {
+    window.parent.frames['headerframe'].location = '../header/header.logged-in.frame.html';
+    window.parent.frames['mainframe'].location = '../main/home.frame.html';
+  }
+</script>
+
+</body>
+</html>

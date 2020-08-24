@@ -1,0 +1,32 @@
+{
+  "name": "Time Extension",
+  "version": "1.0",
+  "short_name": "Time",
+  "description": "Manage your Time Account with ease",
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "storage"
+  ],
+  "background": {
+    "scripts": [
+      "background.bundle.js"
+    ],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-scripts.bundle.js"
+      ]
+    }
+  ],
+  "browser_action": {
+    "default_popup": "popup/index.html",
+    "default_icon": {}
+  },
+  "manifest_version": 2
+}

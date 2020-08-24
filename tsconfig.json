@@ -1,0 +1,51 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "moduleResolution": "node",
+    "module": "esnext",
+    "target": "es2017",
+    "allowJs": true,
+    "lib": [
+      "dom",
+      "es2020"
+    ],
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/clean-webpack-plugin/dist"
+    ],
+    "types": [
+      "chrome",
+      "node",
+      "jest"
+    ],
+    "sourceMap": true,
+    "pretty": true,
+    "removeComments": true,
+    "strict": true,
+    "alwaysStrict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    //    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitThis": true,
+    "strictBindCallApply": true,
+    "strictFunctionTypes": true,
+    //    "strictNullChecks": true,
+    "strictPropertyInitialization": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": false,
+    "experimentalDecorators": true,
+    "jsx": "react",
+    "jsxFactory": "h"
+  },
+  "include": [
+    "src",
+    "./src/popup"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

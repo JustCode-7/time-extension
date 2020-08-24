@@ -1,0 +1,15 @@
+.flex {
+  display: flex;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.mt1 {
+  margin-top: var(--spacing-extra-small);
+}
+
+.ma2 {
+  margin: var(--spacing-small);
+}

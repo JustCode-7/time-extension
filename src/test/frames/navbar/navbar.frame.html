@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Navbar</title>
+  <link rel="stylesheet" type="text/css" href="/time-extension/src/test/index.css">
+</head>
+<body>
+<h1>Navbar</h1>
+
+<p>TODO insert menu</p>
+<ol>
+  <li>
+    <button onclick="onLogout()">Abmelden</button>
+  </li>
+</ol>
+
+<script>
+  function onLogout() {
+    window.parent.frames['headerframe'].location = '../header/header.not-logged-in.frame.html';
+    window.parent.frames['mainframe'].location = '../main/login.frame.html';
+  }
+
+</script>
+
+</body>
+</html>
