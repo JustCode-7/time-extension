@@ -1,5 +1,5 @@
 import { Component, h, Host } from '@stencil/core';
-import { GeneralService } from '../../global/services/general.service';
+import { ConnectionService } from '../../services/connection.service';
 
 @Component({
   tag: 'te-open-tab',
@@ -19,7 +19,7 @@ export class TeOpenTab {
 
   // noinspection JSMethodCanBeStatic
   private onConnectToTab() {
-    GeneralService.connectToTab();
+    ConnectionService.connectToTab();
   }
 
 }

@@ -1,6 +1,6 @@
 {
   "name": "time-extension",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "description": "Manage your Time Account with ease",
   "main": "src/background/background.ts",
   "scripts": {
@@ -10,13 +10,15 @@
     "stencil:test.watch": "stencil test --spec --e2e --watchAll",
     "stencil:generate": "stencil generate",
     "build": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack-config.json\" webpack && npm run stencil:build",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint src"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@reduxjs/toolkit": "^1.4.0",
     "date-fns": "^2.15.0",
+    "redux-devtools-extension": "^2.13.8",
     "rxjs": "^6.6.2",
     "tachyons": "^4.12.0"
   },
@@ -43,6 +45,7 @@
     "jest-cli": "^26.1.0",
     "puppeteer": "^5.2.1",
     "terser-webpack-plugin": "^3.0.6",
+    "ts-jest": "^26.3.0",
     "ts-loader": "^8.0.1",
     "ts-node": "^8.10.2",
     "tsconfig-paths": "^3.9.0",

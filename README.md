@@ -68,6 +68,10 @@ npm run build
 npm run stencil:test
 ```
 
+```bash
+npx jest
+```
+
 ## LINT
 
 ```

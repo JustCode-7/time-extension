@@ -1,8 +1,33 @@
+import { AnyAction, combineReducers, createStore, Store } from '@reduxjs/toolkit';
+import { composeWithDevTools } from 'redux-devtools-extension';
 import { Logger } from '../../shared/logger';
-import { General, GenericAction, Realm, RUNTIME_MESSAGE_PORT__POPUP } from '../../shared/messaging.util';
-import { AuthService } from './services/auth.service';
-import { GeneralService } from './services/general.service';
+import { Connection, GenericMessage, Realm, RUNTIME_MESSAGE_PORT__POPUP } from '../../shared/messaging.util';
+import { AuthService } from '../services/auth.service';
+import { ConnectionService } from '../services/connection.service';
+import { auth } from '../store/auth.state';
+import { route } from '../store/route.state';
 import Port = chrome.runtime.Port;
+
+/**
+ * Initialize Store
+ */
+const rootReducer = combineReducers({
+  auth: auth.reducer,
+  route: route.reducer,
+});
+export type RootState = ReturnType<typeof rootReducer>
+//export const store: Store = configureStore({ reducer: rootReducer, devTools: true });
+
+export const store: Store = createStore(rootReducer, composeWithDevTools());
+
+
+export function dispatch(action: AnyAction): void {
+  store.dispatch(action);
+}
+
+export function getRootState(): RootState {
+  return store.getState();
+}
 
 
 /**
@@ -10,35 +35,30 @@ import Port = chrome.runtime.Port;
  */
 export let messageConnectionPort: Port;
 
-
 export default async (): Promise<void> => {
   /**
    * The code to be executed should be placed within a default function that is
    * exported by the global script. Ensure all of the code in the global script
    * is wrapped in the function() that is exported.
    */
-  init();
+  initConnectionPort();
 
-  let counter = 0;
-  setTimeout(() => console.log(counter++), 20);
-
-  function init() {
-    const port: Port = chrome.runtime.connect({ name: RUNTIME_MESSAGE_PORT__POPUP });
-    messageConnectionPort = port;
+  function initConnectionPort() {
+    messageConnectionPort = chrome.runtime.connect({ name: RUNTIME_MESSAGE_PORT__POPUP });
     messageConnectionPort.onMessage.addListener(handleMessage);
-    messageConnectionPort.postMessage(new General.CheckTabConnectionAction());
+    messageConnectionPort.postMessage(new Connection.CheckTabConnectionMessage());
   }
 
-  function handleMessage(action: GenericAction): void {
-    console.log('Popup received action ::', action.realm + '.' + action.type, '::', action);
+  function handleMessage(action: GenericMessage): void {
+    Logger.logIncomingMessage('Popup', action);
 
     switch (action.realm) {
       // @formatter:off
-      case Realm.GENERAL: GeneralService.handleAction(action); break;
-      case Realm.AUTH: AuthService.handleAction(action); break;
+      case Realm.CONNECTION: ConnectionService.handleMessage(action); break;
+      case Realm.AUTH: AuthService.handleMessage(action); break;
       // @formatter:on
       default:
-        Logger.logMissingCase(action);
+        Logger.logUnimplementedMessageCase(action);
     }
   }
 };

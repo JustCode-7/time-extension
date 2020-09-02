@@ -1,7 +1,10 @@
 import { Component, h, State } from '@stencil/core';
 import { Auth } from '../../../shared/messaging.util';
-import { AuthService } from '../../global/services/auth.service';
-import { messageConnectionPort } from '../../global/app';
+import { AuthService } from '../../services/auth.service';
+import { getRootState, messageConnectionPort, store } from '../../global/app';
+import { getLoginStatus, LoginStatus } from '../../store/auth.state';
+import { Logger } from '../../../shared/logger';
+import Credentials = Auth.Credentials;
 
 enum Control {
   username,
@@ -15,15 +18,14 @@ enum Control {
 })
 export class TeLogin {
 
-  @State() private _username = '';
-  @State() private _password = '';
-
-  @State() private _loginResult: Auth.LoginStatus = { isLoggedIn: false, loginAttempts: Auth.MAX_LOGIN_ATTEMPTS, isAccountLocked: false };
+  @State() private _credentials: Credentials = { username: '', password: '' };
+  @State() private _loginStatus: LoginStatus = getLoginStatus(getRootState());
 
   constructor() {
-    messageConnectionPort.postMessage(new Auth.CheckLoginStatusAction());
-    AuthService.loginStatus$
-      .subscribe((loginResult: Auth.LoginStatus) => this._loginResult = loginResult);
+    messageConnectionPort.postMessage(new Auth.CheckLoginStatusMessage());
+    store.subscribe(() => {
+      this._loginStatus = getLoginStatus(getRootState());
+    });
   }
 
   render(): h.JSX.IntrinsicElements {
@@ -50,14 +52,14 @@ export class TeLogin {
             <button type='reset' class="ml1" id="reset-btn">RESET</button>
           </div>
 
-          {!this._loginResult.isAccountLocked &&
-          <div>You have {this.getRemainingLoginAttempts()} remaining attempts.</div>
+          {!this._loginStatus.isAccountLocked &&
+          <p>You have {this._loginStatus.remainingAttempts} remaining attempts.</p>
           }
-          {!this._loginResult.isAccountLocked && this.isLastAttempt() &&
-          <div>Watch out. If you fail the next Login, your account will be locked.</div>
+          {!this._loginStatus.isAccountLocked && this.isLastAttempt() &&
+          <p>Watch out. If you fail the next Login, your account will be locked.</p>
           }
-          {this._loginResult.isAccountLocked &&
-          <div>You did it. Your Account is locked.</div>
+          {this._loginStatus.isAccountLocked &&
+          <p>You did it. Your Account is locked.</p>
           }
         </form>
       </div>
@@ -67,29 +69,24 @@ export class TeLogin {
   private handleInput(event: Event, control: Control): void {
     const el = event.target as HTMLInputElement;
     const value = el.value;
+
     switch (control) {
       // @formatter:off
-      case Control.username: this._username = value; break;
-      case Control.password: this._password = value; break;
+      case Control.username: this._credentials.username = value; break;
+      case Control.password: this._credentials.password = value; break;
       // @formatter:on
       default:
-        throw new Error(`Unknown value ${control}`);
+        Logger.logUnimplementedCase(control);
     }
   }
 
   private onLogin(event: Event): void {
     event.preventDefault();
-
-    const credentials: Auth.Credentials = { username: this._username, password: this._password };
-    AuthService.attemptLogin(credentials);
+    AuthService.attemptLogin(this._credentials);
   }
 
-  private getRemainingLoginAttempts(): number {
-    return Auth.MAX_LOGIN_ATTEMPTS - this._loginResult.loginAttempts;
-  }
-
-  private isLastAttempt() {
-    return (Auth.MAX_LOGIN_ATTEMPTS - 1) === this.getRemainingLoginAttempts();
+  private isLastAttempt(): boolean {
+    return this._loginStatus.remainingAttempts === 1;
   }
 
 }

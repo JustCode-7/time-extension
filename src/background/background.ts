@@ -1,23 +1,29 @@
+import { Logger } from '../shared/logger';
 import { RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT, RUNTIME_MESSAGE_PORT__POPUP } from '../shared/messaging.util';
 import { PortConnections } from './port-connections';
 import Port = chrome.runtime.Port;
 
 
+/**
+ * Initialize Message Connections between Popup and Content-Script
+ */
 export const portConnections = new PortConnections();
 
-
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('Background Script got successfully installed.');
+  Logger.info('Background Script got successfully installed');
 });
-
 
 chrome.runtime.onConnect.addListener((port: Port) => {
   switch (port.name) {
-    // @formatter:off
-    case RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT: portConnections.setContentScriptPort(port); break;
-    case RUNTIME_MESSAGE_PORT__POPUP: portConnections.setPopupPort(port); break;
-    // @formatter:on
+    case RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT:
+      portConnections.setContentScriptPort(port);
+      break;
+
+    case RUNTIME_MESSAGE_PORT__POPUP:
+      portConnections.setPopupPort(port);
+      break;
+
     default:
-      console.log('Discard unknown connection:', port.name, port);
+      Logger.info('Discard unknown connection:', port.name, port);
   }
 });

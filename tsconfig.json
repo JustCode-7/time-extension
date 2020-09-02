@@ -12,7 +12,8 @@
     ],
     "typeRoots": [
       "node_modules/@types",
-      "node_modules/clean-webpack-plugin/dist"
+      "node_modules/clean-webpack-plugin/dist",
+      "node_modules/@reduxjs/toolkit/dist"
     ],
     "types": [
       "chrome",

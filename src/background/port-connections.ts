@@ -1,12 +1,13 @@
-import { GenericAction, Realm, RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT, RUNTIME_MESSAGE_PORT__POPUP } from '../shared/messaging.util';
-import { AuthService } from './services/auth.service';
-import { GeneralService } from './services/general.service';
+import { Logger } from '../shared/logger';
+import { GenericMessage, MessageTarget, Realm, RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT, RUNTIME_MESSAGE_PORT__POPUP } from '../shared/messaging.util';
+import { ConnectionService } from './services/connection.service';
 import Port = chrome.runtime.Port;
 
 
 export class PortConnections {
   private _contentScriptPort: Port | null = null;
   private _isContentScriptConnected = false;
+
   private _popupPort: Port | null = null;
   private _isPopupConnected = false;
 
@@ -36,32 +37,53 @@ export class PortConnections {
 
 
   private initListeners(port: Port) {
-    console.log(' + Port connected,', port.name);
+    console.log('+ Port connected,', port.name);
     port.onMessage.addListener((message) => this.onMessage(message));
     port.onDisconnect.addListener((port) => this.onDisconnect(port));
   }
 
-  protected onMessage(action: GenericAction): void {
+  protected onMessage(message: GenericMessage): void {
     try {
-      this.logAction(action);
+      Logger.logMessage(message, this._popupPort, this._contentScriptPort);
 
-      switch (action.realm) {
-        // @formatter:off
-        case Realm.GENERAL: GeneralService.handleAction(action); break;
-        case Realm.AUTH: AuthService.handleAction(action); break;
-        // TODO add additional cases, eg. BUCHUNGEN
-        // @formatter:on
+      switch (message.target) {
+        case MessageTarget.ContentScript:
+          this.getContentScriptPort()?.postMessage(message);
+          break;
+
+        case MessageTarget.Popup:
+          this.getPopupPort()?.postMessage(message);
+          break;
+
+        case MessageTarget.Background:
+          this.handleMessage(message);
+          break;
+
         default:
-          console.error('! Unimplemented case for action', action);
+          Logger.logUnimplementedMessageCase(message);
       }
 
     } catch (error) {
-      console.error('Something went wrong.', error);
+      Logger.error('Something went wrong', error);
     }
   }
 
+  // noinspection JSMethodCanBeStatic
+  private handleMessage(message: GenericMessage): void {
+    switch (message.realm) {
+
+      case Realm.CONNECTION:
+        ConnectionService.handleMessage(message);
+        break;
+
+      default:
+        Logger.logUnimplementedMessageCase(message);
+    }
+  }
+
+
   private onDisconnect(port: Port): void {
-    console.log(' - Port disconnected,', port.name);
+    console.log('- Port disconnected,', port.name);
     port.onMessage.removeListener((message) => this.onMessage(message));
 
     if (port.name === RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT) {
@@ -69,16 +91,5 @@ export class PortConnections {
     } else if (port.name === RUNTIME_MESSAGE_PORT__POPUP) {
       this._isPopupConnected = false;
     }
-  }
-
-
-  private logAction(action: GenericAction) {
-    console.groupCollapsed(`Action received ${action.realm}.${action.type}`);
-    console.log('PopupPort', this._popupPort?.name);
-    console.log('ContentScriptPort', this._contentScriptPort?.name);
-    console.log(action);
-    console.groupEnd();
-
-    // console.log('New action received: ', action, '| PopupPort:', this._popupPort?.name, '| ContentScriptPort: ', this._contentScriptPort?.name);
   }
 }

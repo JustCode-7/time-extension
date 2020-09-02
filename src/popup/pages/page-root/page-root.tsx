@@ -1,6 +1,7 @@
 import '@stencil/router';
 import { Component, h, Host, State } from '@stencil/core';
-import { Route, RoutingState } from '../../../global/services/routing.state';
+import { getRootState, store } from '../../global/app';
+import { getActiveRoute, Route } from '../../store/route.state';
 
 @Component({
   tag: 'page-root',
@@ -8,12 +9,11 @@ import { Route, RoutingState } from '../../../global/services/routing.state';
   shadow: true,
 })
 export class PageRoot {
-  @State() private _activeRoute: Route = RoutingState.activeRoute$.getValue();
+  @State() private _activeRoute: Route = getActiveRoute(getRootState());
 
   constructor() {
-    RoutingState.activeRoute$.subscribe((nextRoute) => {
-      console.log('new route received', nextRoute);
-      this._activeRoute = nextRoute;
+    store.subscribe(() => {
+      this._activeRoute = getActiveRoute(getRootState());
     });
   }
 
@@ -29,7 +29,7 @@ export class PageRoot {
   }
 
   renderRoutes(): h.JSX.IntrinsicElements {
-    console.log('render Route', this._activeRoute);
+    console.log('rendering Route', this._activeRoute);
     switch (this._activeRoute) {
       // @formatter:off
       case Route.OpenTab: return (<te-open-tab/>);

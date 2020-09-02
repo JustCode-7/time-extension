@@ -1,23 +1,23 @@
 import { Logger } from '../shared/logger';
-import { Auth, GenericAction } from '../shared/messaging.util';
+import { Auth, GenericMessage } from '../shared/messaging.util';
 import { sleep } from '../shared/sync.util';
 import { Header, Login, Navbar } from './elements.cs';
 import { messageConnectionPort } from './index.cs';
 
 export const AuthCS = new class {
 
-  handleAction(action: GenericAction) {
+  handleAction(action: GenericMessage) {
     switch (action.type as Auth.MessageType) {
       // @formatter:off
-      case Auth.MessageType.LOGIN_ATTEMPT: this.onLoginAttempt(action as Auth.AttemptLoginAction); break;
+      case Auth.MessageType.LOGIN_ATTEMPT: this.onLoginAttempt(action as Auth.AttemptLoginMessage); break;
       case Auth.MessageType.CHECK_LOGIN_STATUS: this.onCheckLoginStatus(); break;
       // @formatter:on
       default:
-        Logger.logMissingCase(action);
+        Logger.logUnimplementedMessageCase(action);
     }
   }
 
-  private onLoginAttempt({ credentials }: Auth.AttemptLoginAction) {
+  private onLoginAttempt({ credentials }: Auth.AttemptLoginMessage) {
     this.login(credentials).then((isLoggedIn: boolean) => {
       this.sendLoginResult({ isLoggedIn });
     });
@@ -29,7 +29,7 @@ export const AuthCS = new class {
   }
 
   private sendLoginResult(loginResult: Auth.LoginResult) {
-    messageConnectionPort.postMessage(new Auth.LoginResultAction(loginResult));
+    messageConnectionPort.postMessage(new Auth.LoginResultMessage(loginResult));
   }
 
   /**
@@ -39,7 +39,7 @@ export const AuthCS = new class {
    * @param password {string}
    * @return {Promise<boolean>} true if the Login was successful, otherwise false
    */
-  async login({ username, password }: Auth.Credentials): Promise<boolean> {
+  private async login({ username, password }: Auth.Credentials): Promise<boolean> {
     if (this.isLoggedIn()) return true;
 
     Login.usernameInput.element?.setAttribute('value', username);
@@ -62,14 +62,14 @@ export const AuthCS = new class {
    *
    * @return {boolean} true if logged in, otherwise false
    */
-  isLoggedIn(): boolean {
+  private isLoggedIn(): boolean {
     return Header.bitteAnmelden.element === null;
   }
 
   /**
    * Logout
    */
-  logout(): void {
+  private logout(): void {
     Navbar.logout.element?.click();
   }
 };
