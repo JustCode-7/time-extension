@@ -1,7 +1,7 @@
 import { createSelector, createSlice, Draft, PayloadAction, Slice } from '@reduxjs/toolkit';
-import { Constants } from '../../shared/constants';
-import { Auth } from '../../shared/messaging.util';
-import { RootState } from '../global/app';
+import { RootState } from '../popup/global/app';
+import { Constants } from '../shared/constants';
+import { Auth } from '../shared/messaging.util';
 import Credentials = Auth.Credentials;
 
 export interface LoginStatus {

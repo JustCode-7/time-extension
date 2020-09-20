@@ -1,5 +1,5 @@
 import { createSelector, createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
-import { RootState } from '../global/app';
+import { RootState } from '../popup/global/app';
 
 export enum Route {
   OpenTab = 'OpenTab',
