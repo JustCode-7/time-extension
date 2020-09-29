@@ -6,6 +6,7 @@
   "scripts": {
     "postinstall": "npm run install:vue",
     "install:vue": "(cd src/popup-vue && npm install)",
+    "serve": "(cd src/popup-vue && npm run serve)",
     "build": "npm run build:webpack && npm run build:vue",
     "build:webpack": "cross-env TS_NODE_PROJECT=\"tsconfig-for-webpack.json\" webpack",
     "build:vue": "(cd src/popup-vue && npm run build)",
