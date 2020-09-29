@@ -1,12 +1,12 @@
 import { Logger } from '../shared/logger';
-import { Auth, GenericMessage } from '../shared/messaging.util';
+import { Auth, GenericMessage } from '../shared/message.types';
 import { sleep } from '../shared/sync.util';
 import { Header, Login, Navbar } from './elements.cs';
 import { messageConnectionPort } from './index.cs';
 
 export const AuthCS = new class {
 
-  handleAction(action: GenericMessage) {
+  handleMessage(action: GenericMessage) {
     switch (action.type as Auth.MessageType) {
       // @formatter:off
       case Auth.MessageType.LOGIN_ATTEMPT: this.onLoginAttempt(action as Auth.AttemptLoginMessage); break;

@@ -1,4 +1,4 @@
-import { GenericMessage } from './messaging.util';
+import { GenericMessage } from './message.types';
 import Port = chrome.runtime.Port;
 
 export class Logger {

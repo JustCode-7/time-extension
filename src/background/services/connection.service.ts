@@ -1,6 +1,6 @@
 import { Constants } from '../../shared/constants';
 import { Logger } from '../../shared/logger';
-import { Connection, GenericMessage } from '../../shared/messaging.util';
+import { Connection, GenericMessage } from '../../shared/message.types';
 import { portConnections } from '../background';
 import Tab = chrome.tabs.Tab;
 import MessageType = Connection.MessageType;
@@ -11,7 +11,7 @@ export const ConnectionService = new class {
     switch (action.type as Connection.MessageType) {
       // @formatter:off
       case MessageType.CONNECT_TO_TAB: this.connectToTab(); break;
-      case MessageType.CHECK_TAB_CONNECTION: this.checkIfTabIsConnected(); break;
+      case MessageType.CHECK_TAB_CONNECTION: this.sendTabConnectionStatus(); break;
       // @formatter:on
       default:
         Logger.logUnimplementedMessageCase(action);
@@ -26,6 +26,11 @@ export const ConnectionService = new class {
    * - Reload an existing tab to reinitialize the Content-Script Connection
    */
   private connectToTab(): void {
+    if (portConnections.isContentScriptConnected()) {
+      this.sendTabConnectionStatus();
+      return;
+    }
+
     chrome.tabs.query(
       { url: Constants.ZEIT_URL_QUERY_PATTERN },
       (result: Tab[]) => {
@@ -46,7 +51,7 @@ export const ConnectionService = new class {
 
   private focusAndReloadExistingTab(tabId: number | undefined): void {
     if ((!!tabId || tabId === 0) && tabId !== chrome.tabs.TAB_ID_NONE) {
-      chrome.tabs.update(tabId, { active: true });
+      // chrome.tabs.update(tabId, { active: true });
       chrome.tabs.reload(tabId);
       // chrome.tabs.highlight({ tabs: [tabId] });
     } else {
@@ -54,8 +59,9 @@ export const ConnectionService = new class {
     }
   }
 
-  private checkIfTabIsConnected() {
+  private sendTabConnectionStatus() {
     const isTabConnected = portConnections.isContentScriptConnected();
+
     portConnections.getPopupPort()
       ?.postMessage(new Connection.TabConnectionStatusMessage({ isTabConnected }));
   }

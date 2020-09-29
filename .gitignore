@@ -32,10 +32,6 @@ speed-measure-plugin.json
 .history/*
 
 
-# Stencil
-.stencil/
-src/popup/components.d.ts
-
 !www/favicon.ico
 www/
 

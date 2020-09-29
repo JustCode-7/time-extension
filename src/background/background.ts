@@ -1,5 +1,5 @@
 import { Logger } from '../shared/logger';
-import { RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT, RUNTIME_MESSAGE_PORT__POPUP } from '../shared/messaging.util';
+import { RUNTIME_MESSAGE_PORT__CONTENT_SCRIPT, RUNTIME_MESSAGE_PORT__POPUP } from '../shared/message.types';
 import { PortConnections } from './port-connections';
 import Port = chrome.runtime.Port;
 

@@ -4,7 +4,7 @@
     "outDir": "./dist/",
     "moduleResolution": "node",
     "module": "esnext",
-    "target": "es2017",
+    "target": "es2019",
     "allowJs": true,
     "lib": [
       "dom",
@@ -38,15 +38,11 @@
     "strictPropertyInitialization": true,
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": false,
-    "experimentalDecorators": true,
-    "jsx": "react",
-    "jsxFactory": "h"
+    "experimentalDecorators": true
   },
   "include": [
-    "src",
-    "./src/popup"
-  ],
-  "exclude": [
-    "node_modules"
+    "src/background/**/*",
+    "src/content-scripts/**/*",
+    "src/shared/**/*"
   ]
 }

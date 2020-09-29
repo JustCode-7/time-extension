@@ -34,6 +34,10 @@ Webpage <=> Background Script <=> Popup
 https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Content_scripts#Connection-based_messaging
 
 
+### State Handling
+
+The Popup handles all the state by utilizing `@reduxjs/toolkit`.
+
 ## Requirements
 
 - NodeJs and npm
@@ -77,3 +81,30 @@ npx jest
 ```
 npm run lint
 ```
+
+# Popup - Framework considerations
+
+1. Stencil  
+    `+` Typescript support out of the box  
+    `+` Easy to set up  
+    `-` Styling inside the Shadow-Dom means duplicating a lot of CSS  
+    `-` Currently, does not support source maps.  
+
+2. Svelte
+    `+` Very lightweight
+    `+` Simple and easy, very good and interactive tutorial 
+    `-` Typescript-Setup with webpack did not work. (when including exported interfaces/functions)
+    `-` Webstorm does not support Svelte in combination with Typescript.
+ 
+3. React
+    `+` The most popular SPA-Framework at the moment.
+    `-` CRA is very opinionated and does not support much configuration (e.g setting the src-directory) > ejecting would be required
+    `-` IMO Changes too fast.
+
+4. Angular
+    `+` TS support out of the box
+    `+` Very  
+    `-` IMO too heavyweight for the popup. 
+
+5. VueJs
+
